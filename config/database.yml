@@ -1,0 +1,57 @@
+# PostgreSQL. Versions 9.3 and up are supported.
+#
+# Install the pg driver:
+#   gem install pg
+# On macOS with Homebrew:
+#   gem install pg -- --with-pg-config=/usr/local/bin/pg_config
+# On Windows:
+#   gem install pg
+#       Choose the win32 build.
+#       Install PostgreSQL and put its /bin directory on your path.
+#
+# Configure Using Gemfile
+# gem "pg"
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  # Uncomment the following lines if you are using a non-default PostgreSQL setup
+  username: postgres
+  password: seedeer2004
+  host: localhost # สามารถระบุได้หาก PostgreSQL รันบนเครื่อง localhost
+
+development:
+  <<: *default
+  database: render_development
+  # Uncomment the following lines if needed
+  # username: render
+  # password: your_password
+  # host: localhost # Uncomment this if needed
+
+test:
+  <<: *default
+  database: render_test
+  # Uncomment the following lines if needed
+  # username: render
+  # password: your_password
+  # host: localhost # Uncomment this if needed
+
+production:
+  primary: &primary_production
+    <<: *default
+    database: render_production
+    username: render
+    password: <%= ENV["RENDER_DATABASE_PASSWORD"] %> # ใช้ environment variable สำหรับ password
+  cache:
+    <<: *primary_production
+    database: render_production_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_production
+    database: render_production_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_production
+    database: render_production_cable
+    migrations_paths: db/cable_migrate
